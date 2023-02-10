@@ -24,7 +24,7 @@ const OAuth = () => {
 				});
 			}
 			navigate('/');
-			toast.success('Signing in was successful', {
+			toast.success(`Welcome ${user.displayName}`, {
 				position: 'top-right',
 				autoClose: 5000,
 				hideProgressBar: false,

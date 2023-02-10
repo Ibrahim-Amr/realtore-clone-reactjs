@@ -1,7 +1,10 @@
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import OAuth from '../components/OAuth';
+import { auth } from '../Firebase';
 
 const SignIn = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -11,7 +14,7 @@ const SignIn = () => {
 	});
 
 	const { email, password } = formData;
-
+	let navigate = useNavigate();
 	function onChange(e) {
 		setFormData((prevState) => ({
 			...prevState,
@@ -19,8 +22,41 @@ const SignIn = () => {
 		}));
 	}
 
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
+		try {
+			const userCredential = await signInWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
+			const user = userCredential.user;
+			if (user) {
+				navigate('/');
+			}
+			toast.success(`Welcome ${user.displayName}`, {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+		} catch (err) {
+			// console.log(err.message);
+			toast.error('Please enter a valid email and password', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+		}
 	}
 	return (
 		<>
