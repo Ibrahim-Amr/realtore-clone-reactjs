@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+	background-color: rgb(240, 253, 244);
+}
+
+/* NAVBAR LINKS */
 .active {
 	border-bottom: 3px solid red;
 	color: rgb(0, 0, 0);

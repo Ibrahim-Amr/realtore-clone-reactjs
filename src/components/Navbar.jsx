@@ -6,7 +6,7 @@ const Navbar = () => {
 		<>
 			<div className='bg-white border-b shadow-sm sticky top-0 z-50 py-3'>
 				<nav className='flex justify-between items-centerp px-3 max-w-6xl mx-auto'>
-					<div className='logo flex-1'>
+					<div className='logo'>
 						<Link to={'/'}>
 							<img
 								src='https://static.rdc.moveaws.com/images/logos/rdc-logo-default.svg'
@@ -15,7 +15,7 @@ const Navbar = () => {
 							/>
 						</Link>
 					</div>
-					<div className='nav-links flex-1'>
+					<div className='nav-links'>
 						<ul className='flex space-x-10'>
 							<li>
 								<NavLink
