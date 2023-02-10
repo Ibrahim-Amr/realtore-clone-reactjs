@@ -33,17 +33,17 @@ const SignIn = () => {
 			const user = userCredential.user;
 			if (user) {
 				navigate('/');
+				toast.success(`Welcome ${user.displayName}`, {
+					position: 'top-right',
+					autoClose: 5000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: 'light',
+				});
 			}
-			toast.success(`Welcome ${user.displayName}`, {
-				position: 'top-right',
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'light',
-			});
 		} catch (err) {
 			// console.log(err.message);
 			toast.error('Please enter a valid email and password', {

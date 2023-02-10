@@ -1,6 +1,9 @@
+import { sendPasswordResetEmail } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import OAuth from '../components/OAuth';
+import { auth } from '../Firebase';
 
 const ForgotPassword = () => {
 	const [email, setEmail] = useState('');
@@ -9,8 +12,32 @@ const ForgotPassword = () => {
 		setEmail(e.target.value);
 	}
 
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
+		try {
+			await sendPasswordResetEmail(auth, email);
+			toast.success(`Email was sent`, {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+		} catch (err) {
+			toast.error('Wrong email address', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+		}
 	}
 	return (
 		<>
