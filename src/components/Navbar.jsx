@@ -1,7 +1,20 @@
-import React from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { auth } from '../Firebase';
 
 const Navbar = () => {
+	const [userState, setUserState] = useState('Sign in');
+
+	useEffect(() => {
+		onAuthStateChanged(auth, (user) => {
+			if (user) {
+				setUserState('Profile');
+			} else {
+				setUserState('Sign in');
+			}
+		});
+	}, [auth]);
 	return (
 		<>
 			<div className='bg-white border-b shadow-sm sticky top-0 z-50 py-3'>
@@ -33,9 +46,9 @@ const Navbar = () => {
 							</li>
 							<li>
 								<NavLink
-									to={'/sign-in'}
+									to={userState === 'Sign in' ? '/sign-in' : 'profile'}
 									className='py-3 text-sm font-semibold text-gray-400'>
-									Sign in
+									{userState}
 								</NavLink>
 							</li>
 						</ul>
