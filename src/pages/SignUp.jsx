@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, db } from '../Firebase';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -10,9 +14,8 @@ const SignUp = () => {
 		email: '',
 		password: '',
 	});
-
 	const { name, email, password } = formData;
-
+	let navigate = useNavigate();
 	function onChange(e) {
 		setFormData((prevState) => ({
 			...prevState,
@@ -20,9 +23,49 @@ const SignUp = () => {
 		}));
 	}
 
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
+		try {
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
+			updateProfile(auth.currentUser, {
+				displayName: name,
+			});
+			const user = userCredential.user;
+			const formDataCopy = { ...formData };
+			delete formDataCopy.password;
+			formDataCopy.timestamp = serverTimestamp();
+
+			await setDoc(doc(db, 'users', user.uid), formDataCopy);
+			navigate('/');
+			toast.success('Sign up was successful', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+		} catch (err) {
+			// console.log(err.message);
+			toast.error('Please enter a valid email and password', {
+				position: 'top-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'light',
+			});
+		}
 	}
+
 	return (
 		<>
 			<section>
