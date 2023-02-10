@@ -41,28 +41,9 @@ const SignUp = () => {
 
 			await setDoc(doc(db, 'users', user.uid), formDataCopy);
 			navigate('/');
-			toast.success('Sign up was successful', {
-				position: 'top-right',
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'light',
-			});
+			toast.success(`Welcome ${user.displayName}`);
 		} catch (err) {
-			// console.log(err.message);
-			toast.error('Please enter a valid email and password', {
-				position: 'top-right',
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'light',
-			});
+			toast.error('Please enter a valid email and password');
 		}
 	}
 

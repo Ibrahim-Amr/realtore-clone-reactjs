@@ -8,35 +8,13 @@ import { auth } from '../Firebase';
 const ForgotPassword = () => {
 	const [email, setEmail] = useState('');
 
-	function onChange(e) {
-		setEmail(e.target.value);
-	}
-
 	async function handleSubmit(e) {
 		e.preventDefault();
 		try {
 			await sendPasswordResetEmail(auth, email);
-			toast.success(`Email was sent`, {
-				position: 'top-right',
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'light',
-			});
+			toast.success(`Email was sent`);
 		} catch (err) {
-			toast.error('Wrong email address', {
-				position: 'top-right',
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'light',
-			});
+			toast.error('Wrong email address');
 		}
 	}
 	return (
@@ -63,7 +41,7 @@ const ForgotPassword = () => {
 								placeholder='Email address'
 								id='email'
 								value={email}
-								onChange={onChange}
+								onChange={(e) => setEmail(e.target.value)}
 							/>
 							{/* BUTTON */}
 							<div className='flex justify-between  whitespace-nowrap text-sm sm:text-lg'>
