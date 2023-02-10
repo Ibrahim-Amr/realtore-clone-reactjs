@@ -17,7 +17,7 @@ const Navbar = () => {
 	}, [auth]);
 	return (
 		<>
-			<div className='bg-white border-b shadow-sm sticky top-0 z-50 py-3'>
+			<div className='bg-white border-b shadow-sm sticky top-0 z-40 py-3'>
 				<nav className='flex justify-between items-centerp px-3 max-w-6xl mx-auto'>
 					<div className='logo'>
 						<Link to={'/'}>
