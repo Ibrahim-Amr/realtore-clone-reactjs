@@ -1,6 +1,16 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import Spinner from '../components/Spinner';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage } from '../Firebase';
+import { v4 as uuidv4 } from 'uuid';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 const CreateListing = () => {
+	const navigate = useNavigate();
+	const [geolocationEnabled, setGeolocationEnabled] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		type: 'rent',
 		name: '',
@@ -9,10 +19,13 @@ const CreateListing = () => {
 		parking: false,
 		furnished: false,
 		address: '',
-		discription: '',
+		description: '',
 		offer: false,
 		regularPrice: 0,
 		discountedPrice: 0,
+		latitude: 0,
+		longitude: 0,
+		images: {},
 	});
 	const {
 		type,
@@ -20,21 +33,138 @@ const CreateListing = () => {
 		bedrooms,
 		bathrooms,
 		parking,
-		furnished,
 		address,
-		discription,
+		furnished,
+		description,
 		offer,
 		regularPrice,
 		discountedPrice,
+		latitude,
+		longitude,
+		images,
 	} = formData;
+
+	function onChange(e) {
+		let boolean = null;
+		if (e.target.value === 'true') {
+			boolean = true;
+		}
+		if (e.target.value === 'false') {
+			boolean = false;
+		}
+		// Files
+		if (e.target.files) {
+			setFormData((prevState) => ({
+				...prevState,
+				images: e.target.files,
+			}));
+		}
+		// Text/Boolean/Number
+		if (!e.target.files) {
+			setFormData((prevState) => ({
+				...prevState,
+				[e.target.id]: boolean ?? e.target.value,
+			}));
+		}
+	}
+
+	async function handleSubmit(e) {
+		e.preventDefault();
+		setLoading(true);
+		if (+discountedPrice >= +regularPrice) {
+			setLoading(false);
+			toast.error('Discounted Price needs to be less than regular price');
+			return;
+		}
+		if (images.length > 6) {
+			toast.error('Maximum 6 images are allowed');
+			return;
+		}
+		let geolocation = {};
+		// let location;
+		if (!geolocationEnabled) {
+			geolocation.lat = latitude;
+			geolocation.lng = longitude;
+		}
+
+		// STORE IMAGE
+		async function storeImage(image) {
+			return new Promise((resolve, reject) => {
+				const filename = `${auth.currentUser.uid}-${
+					image.name
+				}-${uuidv4()}`;
+				const storageRef = ref(storage, filename);
+				const uploadTask = uploadBytesResumable(storageRef, image);
+				uploadTask.on(
+					'state_changed',
+					(snapshot) => {
+						// Observe state change events such as progress, pause, and resume
+						// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+						const progress =
+							(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						console.log('Upload is ' + progress + '% done');
+						switch (snapshot.state) {
+							case 'paused':
+								console.log('Upload is paused');
+								break;
+							case 'running':
+								console.log('Upload is running');
+								break;
+						}
+					},
+					(error) => {
+						// Handle unsuccessful uploads
+						reject(error);
+					},
+					() => {
+						// Handle successful uploads on complete
+						// For instance, get the download URL: https://firebasestorage.googleapis.com/...
+						getDownloadURL(uploadTask.snapshot.ref).then(
+							(downloadURL) => {
+								resolve(downloadURL);
+							}
+						);
+					}
+				);
+			});
+		}
+
+		const imgUrls = await Promise.all(
+			[...images].map((image) => storeImage(image))
+		).catch((error) => {
+			setLoading(false);
+			toast.error('Images not uploaded');
+			return;
+		});
+
+		const formDataCopy = {
+			...formData,
+			imgUrls,
+			geolocation,
+			timestamp: serverTimestamp(),
+		};
+		delete formDataCopy.images;
+		!formDataCopy.offer && delete formDataCopy.discountedPrice;
+		geolocationEnabled && delete formDataCopy.latitude;
+		geolocationEnabled && delete formDataCopy.longitude;
+		const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
+		setLoading(false);
+		toast.success('upload completed');
+		navigate(`/category/${formDataCopy.type}/${docRef.id}`);
+	}
+
+	if (loading) {
+		return <Spinner />;
+	}
 	return (
 		<main className='max-w-md mx-auto px-2'>
 			<h1 className='text-3xl text-center my-6 font-bold'>Add your home</h1>
-			<form className=''>
+			<form onSubmit={handleSubmit}>
 				{/* RENT AND SELL */}
 				<p className='text-lg font-semibold mb-2'>Sell / Rednt</p>
 				<div className='flex gap-x-5'>
 					<button
+						onClick={onChange}
 						type='button'
 						id='type'
 						value={'sale'}
@@ -46,9 +176,10 @@ const CreateListing = () => {
 						sell
 					</button>
 					<button
+						onClick={onChange}
 						type='button'
 						id='type'
-						value={'sale'}
+						value={'rent'}
 						className={`px-7 py-3 font-medium text-sm uppercase shadow-md hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full rounded ${
 							type === 'sale'
 								? 'bg-white text-black'
@@ -60,6 +191,7 @@ const CreateListing = () => {
 				{/* Name Field */}
 				<p className='text-lg font-semibold mt-6'>Name</p>
 				<input
+					onChange={onChange}
 					type='text'
 					id='name'
 					value={name}
@@ -74,6 +206,7 @@ const CreateListing = () => {
 					<div className='w-full'>
 						<p className='text-lg font-semibold'>Beds</p>
 						<input
+							onChange={onChange}
 							type='number'
 							id='bedrooms'
 							value={bedrooms}
@@ -86,6 +219,7 @@ const CreateListing = () => {
 					<div className='w-full'>
 						<p className='text-lg font-semibold'>Baths</p>
 						<input
+							onChange={onChange}
 							type='number'
 							id='bathrooms'
 							value={bathrooms}
@@ -100,6 +234,7 @@ const CreateListing = () => {
 				<p className='text-lg font-semibold mb-2'>Parking spot</p>
 				<div className='flex gap-x-5'>
 					<button
+						onClick={onChange}
 						type='button'
 						id='parking'
 						value={true}
@@ -111,6 +246,7 @@ const CreateListing = () => {
 						Yes
 					</button>
 					<button
+						onClick={onChange}
 						type='button'
 						id='parking'
 						value={false}
@@ -124,6 +260,7 @@ const CreateListing = () => {
 				<p className='text-lg font-semibold mb-2'>Furnished</p>
 				<div className='flex gap-x-5'>
 					<button
+						onClick={onChange}
 						type='button'
 						id='furnished'
 						value={true}
@@ -135,6 +272,7 @@ const CreateListing = () => {
 						Yes
 					</button>
 					<button
+						onClick={onChange}
 						type='button'
 						id='furnished'
 						value={false}
@@ -149,6 +287,7 @@ const CreateListing = () => {
 				{/* Address */}
 				<p className='text-lg font-semibold mt-6'>Address</p>
 				<textarea
+					onChange={onChange}
 					type='text'
 					id='address'
 					value={address}
@@ -156,13 +295,45 @@ const CreateListing = () => {
 					required
 					className='w-full px-4 py-2 text-xl text-gray-700 border border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-slate-600 mb-6 resize-none'
 				/>
-				{/* Discription */}
-				<p className='text-lg font-semibold'>Discription</p>
+				{/* Longitude &  Latitude */}
+				{!geolocationEnabled && (
+					<div className='flex gap-x-5 mb-6'>
+						<div className='w-full'>
+							<p className='text-lg font-semibold'>Latitude</p>
+							<input
+								type='number'
+								id='latitude'
+								value={latitude}
+								min='-90'
+								max='90'
+								required
+								onChange={onChange}
+								className='px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-slate-600 text-center w-full'
+							/>
+						</div>
+						<div className='w-full'>
+							<p className='text-lg font-semibold'>Longitude</p>
+							<input
+								type='number'
+								id='longitude'
+								value={longitude}
+								min='-180'
+								max='180'
+								required
+								onChange={onChange}
+								className='px-4 py-2 text-xl  text-gray-700 bg-white border border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-slate-600 text-center w-full'
+							/>
+						</div>
+					</div>
+				)}
+				{/* description */}
+				<p className='text-lg font-semibold'>description</p>
 				<textarea
+					onChange={onChange}
 					type='text'
-					id='discription'
-					value={discription}
-					placeholder='Discription'
+					id='description'
+					value={description}
+					placeholder='description'
 					required
 					className='w-full px-4 py-2 text-xl text-gray-700 border border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-slate-600 mb-6 resize-none'
 				/>
@@ -170,6 +341,7 @@ const CreateListing = () => {
 				<p className='text-lg font-semibold mb-2'>Offer</p>
 				<div className='flex gap-x-5 mb-6'>
 					<button
+						onClick={onChange}
 						type='button'
 						id='offer'
 						value={true}
@@ -179,6 +351,7 @@ const CreateListing = () => {
 						Yes
 					</button>
 					<button
+						onClick={onChange}
 						type='button'
 						id='offer'
 						value={false}
@@ -190,10 +363,11 @@ const CreateListing = () => {
 				</div>
 				{/* Price  */}
 				<div className='mb-6'>
-					<p className='text-lg font-semibold'>Regular price</p>
+					<p className='text-lg font-semibold'>Regular Price</p>
 					<div className='w-full'>
 						<div className='w-full flex justify-center items-center gap-x-5'>
 							<input
+								onChange={onChange}
 								type='number'
 								id='regularPrice'
 								value={regularPrice}
@@ -213,10 +387,11 @@ const CreateListing = () => {
 				{/* Discounted Price */}
 				{offer && (
 					<div className='mb-6'>
-						<p className='text-lg font-semibold'>Regular price</p>
+						<p className='text-lg font-semibold'>Discounted Price</p>
 						<div className='w-full'>
 							<div className='w-full flex justify-center items-center gap-x-5'>
 								<input
+									onChange={onChange}
 									type='number'
 									id='discountedPrice'
 									value={discountedPrice}
@@ -243,6 +418,7 @@ const CreateListing = () => {
 					<input
 						type='file'
 						id='images'
+						onChange={onChange}
 						accept='.jpg,.png,.jpeg'
 						multiple
 						required
