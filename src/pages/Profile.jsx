@@ -1,9 +1,10 @@
 import { updateProfile } from 'firebase/auth';
 import { doc, updateDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { auth, db } from '../Firebase';
+import { FcHome } from 'react-icons/fc';
 
 const Profile = () => {
 	const [changeName, setChangeName] = useState(false);
@@ -56,7 +57,7 @@ const Profile = () => {
 							value={name}
 							disabled={!changeName}
 							onChange={onChange}
-							className={`w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded mb-6 ${
+							className={`w-full px-4 py-2 text-xl text-gray-700  border-gray-300 rounded mb-6 ${
 								changeName && 'bg-red-300 focus:bg-red-300 text-white'
 							}`}
 						/>
@@ -87,6 +88,14 @@ const Profile = () => {
 							</p>
 						</div>
 					</form>
+					<button className='w-full bg-blue-600 text-white uppercase px-7 py-3 text-sm font-medium rounded shadow-md hover:shadow-lg hover:bg-blue-700 transition ease-in-out duration-150'>
+						<Link
+							to={'/create-listing'}
+							className='flex justify-center items-center'>
+							<FcHome className='mr-2 text-3xl bg-red-200 rounded-full p-1 border-2' />
+							sell or rent yuor home
+						</Link>
+					</button>
 				</div>
 			</section>
 		</>
