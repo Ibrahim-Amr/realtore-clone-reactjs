@@ -139,7 +139,7 @@ const Profile = () => {
 						<h2 className='text-2xl text-center font-semibold'>
 							My listings
 						</h2>
-						<ul>
+						<ul className='sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4'>
 							{listings.map((list) => (
 								<Listitem key={list.id} id={list.id} list={list.data} />
 							))}
