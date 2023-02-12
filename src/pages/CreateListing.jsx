@@ -110,6 +110,7 @@ const CreateListing = () => {
 							case 'running':
 								console.log('Upload is running');
 								break;
+							default:
 						}
 					},
 					(error) => {
@@ -142,6 +143,7 @@ const CreateListing = () => {
 			imgUrls,
 			geolocation,
 			timestamp: serverTimestamp(),
+			userRef: auth.currentUser.uid,
 		};
 		delete formDataCopy.images;
 		!formDataCopy.offer && delete formDataCopy.discountedPrice;

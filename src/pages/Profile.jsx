@@ -1,13 +1,24 @@
 import { updateProfile } from 'firebase/auth';
-import { doc, updateDoc } from 'firebase/firestore';
-import React, { useState } from 'react';
+import {
+	collection,
+	doc,
+	getDocs,
+	orderBy,
+	query,
+	updateDoc,
+	where,
+} from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { auth, db } from '../Firebase';
 import { FcHome } from 'react-icons/fc';
+import Listitem from './Listitem';
 
 const Profile = () => {
 	const [changeName, setChangeName] = useState(false);
+	const [listings, setListings] = useState(null);
+	const [loading, setLoading] = useState(true);
 	const [formData, setFormData] = useState({
 		name: auth.currentUser.displayName,
 		email: auth.currentUser.email,
@@ -45,6 +56,30 @@ const Profile = () => {
 			toast.error('Could not update profile details');
 		}
 	}
+
+	useEffect(() => {
+		async function fetchUserListings() {
+			const listingRef = collection(db, 'listings');
+			const q = query(
+				listingRef,
+				where('userRef', '==', auth.currentUser.uid),
+				orderBy('timestamp', 'desc')
+			);
+			const querySnap = await getDocs(q);
+			let listings = [];
+			querySnap.forEach((doc) => {
+				return listings.push({
+					id: doc.id,
+					data: doc.data(),
+				});
+			});
+			setListings(listings);
+			setLoading(false);
+			console.log(listings);
+		}
+		fetchUserListings();
+	}, [auth.currentUser.uid]);
+
 	return (
 		<>
 			<section className='max-w-6xl mx-auto flex justify-center items-center flex-col'>
@@ -97,6 +132,20 @@ const Profile = () => {
 						</Link>
 					</button>
 				</div>
+			</section>
+			<section className='max-w-6xl px-3 pt-6 mx-auto'>
+				{!loading && listings.length > 0 && (
+					<>
+						<h2 className='text-2xl text-center font-semibold'>
+							My listings
+						</h2>
+						<ul>
+							{listings.map((list) => (
+								<Listitem key={list.id} id={list.id} list={list.data} />
+							))}
+						</ul>
+					</>
+				)}
 			</section>
 		</>
 	);
