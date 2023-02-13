@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../Firebase';
+import { auth, db } from '../Firebase';
 import Spinner from '../components/Spinner';
 import {
 	FaShare,
@@ -19,12 +19,13 @@ import 'swiper/css/bundle';
 // import required modules
 import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper';
 import { toast } from 'react-toastify';
+import Contact from '../components/Contact';
 
 const Category = () => {
 	const { id } = useParams();
 	const [categoryData, setCategoryData] = useState(null);
 	const [loading, setLoading] = useState(true);
-	// SwiperCore.use(Autoplay, Navigation, Pagination);
+	const [contactLandLord, setContactLandLord] = useState(false);
 
 	useEffect(() => {
 		async function getData() {
@@ -33,7 +34,6 @@ const Category = () => {
 			if (docSnap.exists()) {
 				setCategoryData(docSnap.data());
 				setLoading(false);
-				console.log(docSnap.data());
 			}
 		}
 
@@ -57,13 +57,15 @@ const Category = () => {
 					modules={[Pagination, Navigation, Autoplay, EffectFade]}
 					className='mySwiper'>
 					{categoryData.imgUrls.map((url, index) => (
-						<SwiperSlide>
-							<div
-								className='relative w-full overflow-hidden h-[350px]'
-								style={{
-									background: `url(${categoryData.imgUrls[index]}) center no-repeat`,
-									backgroundSize: 'cover',
-								}}></div>
+						<SwiperSlide key={index}>
+							<div className='relative w-full overflow-hidden h-[350px]'>
+								<img
+									src={url}
+									alt=''
+									loading='lazy'
+									className='object-cover w-full h-full'
+								/>
+							</div>
 						</SwiperSlide>
 					))}
 				</Swiper>
@@ -74,13 +76,13 @@ const Category = () => {
 							autoClose: 500,
 						});
 					}}
-					className='absolute top-[13%] right-[3%] cursor-pointer border-2 border-gray-400 bg-white rounded-full w-12 h-12 flex justify-center items-center z-50'>
+					className='absolute top-[5%] right-[3%] cursor-pointer border-2 border-gray-400 bg-white rounded-full w-12 h-12 flex justify-center items-center z-10'>
 					<FaShare className='text-lg text-slate-500' />
 				</div>
 				<div className='flex flex-col lg:flex-row max-w-6xl lg:mx-auto m-4 p-4 rounded-lg shadow-lg bg-white lg:space-x-5'>
-					<div className='w-full min-h-[200px] lg:min-h-[400px]'>
+					<div className='w-full min-h-[200px] lg:min-h-[400px] overflow-hidden'>
 						{/* Title */}
-						<p className='text-2xl font-bold mb-3 text-blue-900'>
+						<p className='text-base  sm:text-2xl font-bold mb-3 text-blue-900'>
 							{categoryData.name} - ${' '}
 							{categoryData.offer
 								? categoryData.discountedPrice
@@ -93,7 +95,7 @@ const Category = () => {
 						</p>
 						{/* Adress */}
 						<div className='mb-6'>
-							<p className='flex justify-start items-center font-semibold'>
+							<p className='text-sm sm:text-base flex justify-start items-center font-semibold'>
 								<FaMapMarkerAlt className='text-green-700 mr-1' />
 								{categoryData.address}
 							</p>
@@ -115,12 +117,12 @@ const Category = () => {
 						{/* description */}
 						<p className='font-semibold my-3 mb-6'>
 							Description:{' '}
-							<span className='font-normal'>
+							<span className='font-normal  '>
 								{categoryData.description}
 							</span>
 						</p>
 						{/* Icons / details */}
-						<ul className='flex items-center gap-6 lg:gap-10 text-sm font-semibold'>
+						<ul className='flex items-center md:justify-center gap-3 lg:gap-10 text-sm sm:text-base font-semibold mb-6'>
 							<li className='flex justify-start items-center gap-1 whitespace-nowrap '>
 								<FaBed className='text-lg' />
 								<span>
@@ -154,6 +156,26 @@ const Category = () => {
 								</span>
 							</li>
 						</ul>
+						{/* Form */}
+						{contactLandLord && (
+							<Contact
+								userRef={categoryData.userRef}
+								categoryData={categoryData}
+							/>
+						)}
+
+						{categoryData.userRef !== auth.currentUser.uid &&
+							!contactLandLord && (
+								<div className='flex justify-center items-center'>
+									<button
+										className='px-7 py-3 bg-blue-600 text-white font-medium text-sm uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg flex-wrap transition duration-150 ease-in-out w-[60%] lg:w-[80%]'
+										onClick={() => {
+											setContactLandLord(true);
+										}}>
+										Contact Landlord
+									</button>
+								</div>
+							)}
 					</div>
 					<div className='bg-blue-300 w-full min-h-[200px] lg:min-h-[400px] z-10 overflow-x-hidden'></div>
 				</div>

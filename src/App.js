@@ -12,6 +12,9 @@ import PrivateRoute from './components/PrivateRoute';
 import CreateListing from './pages/CreateListing';
 import EditItem from './pages/EditItem';
 import Category from './pages/Category';
+import { Offline } from 'react-detect-offline';
+import DetectOffline from './components/DetectOffline';
+import { ScrollRestoration } from 'react-router-dom';
 
 function App() {
 	return (
@@ -49,6 +52,9 @@ function App() {
 				pauseOnHover
 				theme='light'
 			/>
+			<Offline>
+				<DetectOffline />
+			</Offline>
 		</>
 	);
 }

@@ -87,8 +87,8 @@ const Profile = () => {
 			const updatedListings = listings.filter(
 				(listing) => listing.id !== id
 			);
-      setListings(updatedListings);
-      toast.success('item deleted successfully')
+			setListings(updatedListings);
+			toast.success('item deleted successfully');
 		}
 	}
 	function onEdit(id) {

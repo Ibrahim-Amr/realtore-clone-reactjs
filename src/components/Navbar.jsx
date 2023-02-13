@@ -5,6 +5,10 @@ import { auth } from '../Firebase';
 
 const Navbar = () => {
 	const [userState, setUserState] = useState('Sign in');
+	const [windowScroll, setWindowScroll] = useState(0);
+	window.addEventListener('scroll', () => {
+		setWindowScroll(window.scrollY);
+	});
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -17,7 +21,10 @@ const Navbar = () => {
 	}, [auth]);
 	return (
 		<>
-			<div className='bg-white border-b shadow-sm sticky top-0 z-40 py-3'>
+			<div
+				className={`${
+					windowScroll > 50 ? 'bg-white/80' : 'bg-white'
+				} shadow-sm sticky top-0 z-40 py-3 text-black`}>
 				<nav className='flex justify-between items-centerp px-3 max-w-6xl mx-auto'>
 					<div className='logo'>
 						<Link to={'/'}>
@@ -33,21 +40,21 @@ const Navbar = () => {
 							<li>
 								<NavLink
 									to={'/'}
-									className='py-3 text-sm font-semibold text-gray-400'>
+									className='py-3 text-sm font-semibold'>
 									Home
 								</NavLink>
 							</li>
 							<li>
 								<NavLink
 									to={'/offers'}
-									className='py-3 text-sm font-semibold text-gray-400'>
+									className='py-3 text-sm font-semibold'>
 									Offers
 								</NavLink>
 							</li>
 							<li>
 								<NavLink
 									to={userState === 'Sign in' ? '/sign-in' : 'profile'}
-									className='py-3 text-sm font-semibold text-gray-400'>
+									className='py-3 text-sm font-semibold'>
 									{userState}
 								</NavLink>
 							</li>
