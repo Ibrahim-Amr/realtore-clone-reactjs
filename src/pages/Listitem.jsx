@@ -2,8 +2,10 @@ import React from 'react';
 import Moment from 'react-moment';
 import { Link } from 'react-router-dom';
 import { MdLocationOn } from 'react-icons/md';
+import { FaTrash } from 'react-icons/fa';
+import { MdEdit } from 'react-icons/md';
 
-const Listitem = ({ list, id }) => {
+const Listitem = ({ list, id, onDelete, onEdit }) => {
 	return (
 		<li className='relative bg-white flex flex-col justify-between items-center shadow-md hover:shadow-xl rounded-md overflow-hidden transition-shadow duration-150 m-[10px]'>
 			<Link to={`/category/${list.type}/${id}`} className='contents'>
@@ -54,6 +56,18 @@ const Listitem = ({ list, id }) => {
 					</div>
 				</div>
 			</Link>
+			{onDelete && (
+				<FaTrash
+					className='absolute right-2 bottom-2 h-[14px] cursor-pointer text-red-500 hover:text-red-800'
+					onClick={() => onDelete(id)}
+				/>
+			)}
+			{onEdit && (
+				<MdEdit
+					className='absolute right-7 bottom-2 h-4 cursor-pointer text-black hover:text-gray-700'
+					onClick={() => onEdit(id)}
+				/>
+			)}
 		</li>
 	);
 };
