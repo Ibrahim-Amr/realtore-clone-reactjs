@@ -11,3 +11,20 @@ body {
 	border-bottom: 3px solid red;
 	color: rgb(0, 0, 0);
 }
+/* SWIPER */
+.swiper-button-next:after,
+.swiper-button-prev:after {
+	color: #a8dadc !important;
+}
+
+.swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+	background: #a8dadc !important;
+}
+
+html::-webkit-scrollbar {
+	display: none;
+}
+
+/* html {
+	scrollbar-width: none;
+} */
