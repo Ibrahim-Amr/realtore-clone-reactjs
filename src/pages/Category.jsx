@@ -3,14 +3,7 @@ import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../Firebase';
 import Spinner from '../components/Spinner';
-import {
-	FaShare,
-	FaMapMarkerAlt,
-	FaBed,
-	FaBath,
-	FaParking,
-	FaChair,
-} from 'react-icons/fa';
+import { FaShare, FaMapMarkerAlt, FaBed, FaBath, FaParking, FaChair } from 'react-icons/fa';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -20,6 +13,8 @@ import 'swiper/css/bundle';
 import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper';
 import { toast } from 'react-toastify';
 import Contact from '../components/Contact';
+// Leaflet
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 const Category = () => {
 	const { id } = useParams();
@@ -107,19 +102,13 @@ const Category = () => {
 							</p>
 							{categoryData.offer && (
 								<p className='bg-green-800 w-full max-w-[200px] rounded-md p-1 text-white text-center font-semibold shadow-md'>
-									$
-									{+categoryData.regularPrice -
-										+categoryData.discountedPrice}{' '}
-									Discount
+									${+categoryData.regularPrice - +categoryData.discountedPrice} Discount
 								</p>
 							)}
 						</div>
 						{/* description */}
 						<p className='font-semibold my-3 mb-6'>
-							Description:{' '}
-							<span className='font-normal  '>
-								{categoryData.description}
-							</span>
+							Description: <span className='font-normal  '>{categoryData.description}</span>
 						</p>
 						{/* Icons / details */}
 						<ul className='flex items-center md:justify-center gap-3 lg:gap-10 text-sm sm:text-base font-semibold mb-6'>
@@ -142,42 +131,48 @@ const Category = () => {
 							<li className='flex justify-start items-center gap-1 whitespace-nowrap mr-1'>
 								<FaParking className='text-lg' />
 								<span className='capitalize'>
-									{categoryData.parking === true
-										? `Parking spot`
-										: `No Parking`}
+									{categoryData.parking === true ? `Parking spot` : `No Parking`}
 								</span>
 							</li>
 							<li className='flex justify-start items-center gap-1 whitespace-nowrap mr-1'>
 								<FaChair className='text-lg' />
 								<span className='capitalize'>
-									{categoryData.furnished === true
-										? `furnished`
-										: `No furnished `}
+									{categoryData.furnished === true ? `furnished` : `No furnished `}
 								</span>
 							</li>
 						</ul>
 						{/* Form */}
 						{contactLandLord && (
-							<Contact
-								userRef={categoryData.userRef}
-								categoryData={categoryData}
-							/>
+							<Contact userRef={categoryData.userRef} categoryData={categoryData} />
 						)}
 
-						{categoryData.userRef !== auth.currentUser.uid &&
-							!contactLandLord && (
-								<div className='flex justify-center items-center'>
-									<button
-										className='px-7 py-3 bg-blue-600 text-white font-medium text-sm uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg flex-wrap transition duration-150 ease-in-out w-[60%] lg:w-[80%]'
-										onClick={() => {
-											setContactLandLord(true);
-										}}>
-										Contact Landlord
-									</button>
-								</div>
-							)}
+						{categoryData.userRef !== auth.currentUser.uid && !contactLandLord && (
+							<div className='flex justify-center items-center'>
+								<button
+									className='px-7 py-3 bg-blue-600 text-white font-medium text-sm uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg flex-wrap transition duration-150 ease-in-out w-[60%] lg:w-[80%]'
+									onClick={() => {
+										setContactLandLord(true);
+									}}>
+									Contact Landlord
+								</button>
+							</div>
+						)}
 					</div>
-					<div className='bg-blue-300 w-full min-h-[200px] lg:min-h-[400px] z-10 overflow-x-hidden'></div>
+					<div className='w-full h-[400px] lg:h-[450px] z-10 overflow-x-hidden mt-6'>
+						<MapContainer
+							center={[51.505, -0.09]}
+							zoom={13}
+							scrollWheelZoom={true}
+							style={{ height: '100%', width: '100%' }}>
+							<TileLayer
+								attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+								url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+							/>
+							<Marker position={[51.505, -0.09]}>
+								<Popup>{categoryData.address}</Popup>
+							</Marker>
+						</MapContainer>
+					</div>
 				</div>
 			</main>
 		</>

@@ -80,19 +80,34 @@ const CreateListing = () => {
 			toast.error('Maximum 6 images are allowed');
 			return;
 		}
+		// GEOLOATION
 		let geolocation = {};
-		// let location;
-		if (!geolocationEnabled) {
-			geolocation.lat = latitude;
-			geolocation.lng = longitude;
+		let location;
+		if (geolocationEnabled) {
+			const response = await fetch(
+				`https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.REACT_APP_GEOCODE_API_KEY}`
+			);
+			const data = await response.json();
+			console.log(data);
+			geolocation.lat = data.results[0]?.geometry.location.lat ?? 0;
+			geolocation.lng = data.results[0]?.geometry.location.lng ?? 0;
+
+			location = data.status === 'ZERO_RESULTS' && undefined;
+
+			if (location === undefined) {
+				setLoading(false);
+				toast.error('please enter a correct address');
+				return;
+			} else {
+				geolocation.lat = latitude;
+				geolocation.lng = longitude;
+			}
 		}
 
 		// STORE IMAGE
 		async function storeImage(image) {
 			return new Promise((resolve, reject) => {
-				const filename = `${auth.currentUser.uid}-${
-					image.name
-				}-${uuidv4()}`;
+				const filename = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
 				const storageRef = ref(storage, filename);
 				const uploadTask = uploadBytesResumable(storageRef, image);
 				uploadTask.on(
@@ -100,8 +115,7 @@ const CreateListing = () => {
 					(snapshot) => {
 						// Observe state change events such as progress, pause, and resume
 						// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-						const progress =
-							(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 						console.log('Upload is ' + progress + '% done');
 						switch (snapshot.state) {
 							case 'paused':
@@ -120,23 +134,21 @@ const CreateListing = () => {
 					() => {
 						// Handle successful uploads on complete
 						// For instance, get the download URL: https://firebasestorage.googleapis.com/...
-						getDownloadURL(uploadTask.snapshot.ref).then(
-							(downloadURL) => {
-								resolve(downloadURL);
-							}
-						);
+						getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+							resolve(downloadURL);
+						});
 					}
 				);
 			});
 		}
 
-		const imgUrls = await Promise.all(
-			[...images].map((image) => storeImage(image))
-		).catch((error) => {
-			setLoading(false);
-			toast.error('Images not uploaded');
-			return;
-		});
+		const imgUrls = await Promise.all([...images].map((image) => storeImage(image))).catch(
+			(error) => {
+				setLoading(false);
+				toast.error('Images not uploaded');
+				return;
+			}
+		);
 
 		const formDataCopy = {
 			...formData,
@@ -171,9 +183,7 @@ const CreateListing = () => {
 						id='type'
 						value={'sale'}
 						className={`px-7 py-3 font-medium text-sm uppercase shadow-md hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full rounded ${
-							type === 'rent'
-								? 'bg-white text-black'
-								: 'bg-slate-600 text-white'
+							type === 'rent' ? 'bg-white text-black' : 'bg-slate-600 text-white'
 						}`}>
 						sell
 					</button>
@@ -183,9 +193,7 @@ const CreateListing = () => {
 						id='type'
 						value={'rent'}
 						className={`px-7 py-3 font-medium text-sm uppercase shadow-md hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full rounded ${
-							type === 'sale'
-								? 'bg-white text-black'
-								: 'bg-slate-600 text-white'
+							type === 'sale' ? 'bg-white text-black' : 'bg-slate-600 text-white'
 						}`}>
 						rent
 					</button>
@@ -241,9 +249,7 @@ const CreateListing = () => {
 						id='parking'
 						value={true}
 						className={`px-7 py-3 font-medium text-sm uppercase shadow-md hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full rounded ${
-							!parking
-								? 'bg-white text-black'
-								: 'bg-slate-600 text-white'
+							!parking ? 'bg-white text-black' : 'bg-slate-600 text-white'
 						}`}>
 						Yes
 					</button>
@@ -267,9 +273,7 @@ const CreateListing = () => {
 						id='furnished'
 						value={true}
 						className={`px-7 py-3 font-medium text-sm uppercase shadow-md hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full rounded ${
-							!furnished
-								? 'bg-white text-black'
-								: 'bg-slate-600 text-white'
+							!furnished ? 'bg-white text-black' : 'bg-slate-600 text-white'
 						}`}>
 						Yes
 					</button>
@@ -279,9 +283,7 @@ const CreateListing = () => {
 						id='furnished'
 						value={false}
 						className={`px-7 py-3 font-medium text-sm uppercase shadow-md hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full rounded ${
-							furnished
-								? 'bg-white text-black'
-								: 'bg-slate-600 text-white'
+							furnished ? 'bg-white text-black' : 'bg-slate-600 text-white'
 						}`}>
 						No
 					</button>
@@ -414,9 +416,7 @@ const CreateListing = () => {
 				{/* Images Upload */}
 				<div className='mb-6'>
 					<p className='text-lg font-semibold'>Images</p>
-					<p className='text-gray-600'>
-						The first image will be the cover (max 6)
-					</p>
+					<p className='text-gray-600'>The first image will be the cover (max 6)</p>
 					<input
 						type='file'
 						id='images'
