@@ -338,6 +338,7 @@ const CreateListing = () => {
 					id='description'
 					value={description}
 					placeholder='description'
+					maxLength={1000}
 					required
 					className='w-full px-4 py-2 text-xl text-gray-700 border border-gray-300 rounded focus:text-gray-700 focus:bg-white focus:border-slate-600 mb-6 resize-none'
 				/>
