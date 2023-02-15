@@ -40,7 +40,7 @@ const CategoryType = () => {
 			}
 		}
 		FetchData();
-	}, [number]);
+	}, [number, type]);
 
 	return (
 		<>
@@ -64,7 +64,7 @@ const CategoryType = () => {
 						</div>
 					</>
 				) : (
-					<p>there are no current offers</p>
+					<p>there are no current places for {type}</p>
 				)}
 			</main>
 		</>
