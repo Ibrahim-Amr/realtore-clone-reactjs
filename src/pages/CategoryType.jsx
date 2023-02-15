@@ -1,5 +1,6 @@
 import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { db } from '../Firebase';

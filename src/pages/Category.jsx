@@ -145,18 +145,19 @@ const Category = () => {
 						{contactLandLord && (
 							<Contact userRef={categoryData.userRef} categoryData={categoryData} />
 						)}
-
-						{categoryData.userRef !== auth.currentUser.uid && !contactLandLord && (
-							<div className='flex justify-center items-center'>
-								<button
-									className='px-7 py-3 bg-blue-600 text-white font-medium text-sm uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg flex-wrap transition duration-150 ease-in-out w-[60%] lg:w-[80%]'
-									onClick={() => {
-										setContactLandLord(true);
-									}}>
-									Contact Landlord
-								</button>
-							</div>
-						)}
+						{auth.currentUser !== null &&
+							categoryData.userRef !== auth.currentUser.uid &&
+							!contactLandLord && (
+								<div className='flex justify-center items-center'>
+									<button
+										className='px-7 py-3 bg-blue-600 text-white font-medium text-sm uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg flex-wrap transition duration-150 ease-in-out w-[60%] lg:w-[80%]'
+										onClick={() => {
+											setContactLandLord(true);
+										}}>
+										Contact Landlord
+									</button>
+								</div>
+							)}
 					</div>
 					<div className='w-full h-[400px] lg:h-[450px] z-10 overflow-x-hidden mt-6'>
 						<MapContainer

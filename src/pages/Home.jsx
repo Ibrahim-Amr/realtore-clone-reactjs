@@ -1,5 +1,6 @@
 import HomeCategorySection from '../components/HomeCategorySection';
 import HomeSlider from '../components/HomeSlider';
+import { auth } from '../Firebase';
 
 const Home = () => {
 	return (

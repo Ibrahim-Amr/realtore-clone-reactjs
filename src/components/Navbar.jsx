@@ -29,7 +29,7 @@ const Navbar = () => {
 					<div className='logo'>
 						<Link to={'/'}>
 							<img
-								src='https://static.rdc.moveaws.com/images/logos/rdc-logo-default.svg'
+								src='https://www.realtytrac.com/assets/logos/realty-trac-logo-red.svg'
 								alt='Logo'
 								className='h-5 cursor-pointer'
 							/>
@@ -38,16 +38,12 @@ const Navbar = () => {
 					<div className='nav-links'>
 						<ul className='flex space-x-10'>
 							<li>
-								<NavLink
-									to={'/'}
-									className='py-3 text-sm font-semibold'>
+								<NavLink to={'/'} className='py-3 text-sm font-semibold'>
 									Home
 								</NavLink>
 							</li>
 							<li>
-								<NavLink
-									to={'/offers'}
-									className='py-3 text-sm font-semibold'>
+								<NavLink to={'/offers'} className='py-3 text-sm font-semibold'>
 									Offers
 								</NavLink>
 							</li>

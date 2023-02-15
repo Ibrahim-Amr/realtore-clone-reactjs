@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import { auth, db } from '../Firebase';
 import { FcHome } from 'react-icons/fc';
 import Listitem from './Listitem';
+import { Helmet } from 'react-helmet';
 
 const Profile = () => {
 	const [changeName, setChangeName] = useState(false);
@@ -84,9 +85,7 @@ const Profile = () => {
 	async function onDelete(id) {
 		if (window.confirm('Are You Sure You Want to delete this?')) {
 			await deleteDoc(doc(db, 'listings', id));
-			const updatedListings = listings.filter(
-				(listing) => listing.id !== id
-			);
+			const updatedListings = listings.filter((listing) => listing.id !== id);
 			setListings(updatedListings);
 			toast.success('item deleted successfully');
 		}
@@ -139,9 +138,7 @@ const Profile = () => {
 						</div>
 					</form>
 					<button className='w-full bg-blue-600 text-white uppercase px-7 py-3 text-sm font-medium rounded shadow-md hover:shadow-lg hover:bg-blue-700 transition ease-in-out duration-150'>
-						<Link
-							to={'/create-listing'}
-							className='flex justify-center items-center'>
+						<Link to={'/create-listing'} className='flex justify-center items-center'>
 							<FcHome className='mr-2 text-3xl bg-red-200 rounded-full p-1 border-2' />
 							sell or rent yuor home
 						</Link>
@@ -151,9 +148,7 @@ const Profile = () => {
 			<section className='max-w-6xl px-3 pt-6 mx-auto'>
 				{!loading && listings.length > 0 && (
 					<>
-						<h2 className='text-2xl text-center font-semibold'>
-							My list
-						</h2>
+						<h2 className='text-2xl text-center font-semibold'>My list</h2>
 						<ul className='sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4'>
 							{listings.map((list) => (
 								<Listitem

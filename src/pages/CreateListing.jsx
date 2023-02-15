@@ -6,6 +6,7 @@ import { auth, db, storage } from '../Firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 const CreateListing = () => {
 	const navigate = useNavigate();
@@ -172,6 +173,10 @@ const CreateListing = () => {
 	}
 	return (
 		<main className='max-w-md mx-auto px-2'>
+			<Helmet>
+				<title>Real estate - Add home</title>
+				<meta name='description' content='Real estate add home pages' />
+			</Helmet>
 			<h1 className='text-3xl text-center my-6 font-bold'>Add your home</h1>
 			<form onSubmit={handleSubmit}>
 				{/* RENT AND SELL */}

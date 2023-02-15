@@ -29,7 +29,7 @@ const HomeCategorySection = ({ title, subTitle, type, value }) => {
 						data: doc.data(),
 					});
 				});
-				console.log(data);
+
 				setData(data);
 			} catch (err) {
 				console.log(err);

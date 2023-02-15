@@ -1,5 +1,6 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -25,11 +26,7 @@ const SignIn = () => {
 	async function handleSubmit(e) {
 		e.preventDefault();
 		try {
-			const userCredential = await signInWithEmailAndPassword(
-				auth,
-				email,
-				password
-			);
+			const userCredential = await signInWithEmailAndPassword(auth, email, password);
 			const user = userCredential.user;
 			if (user) {
 				navigate('/');

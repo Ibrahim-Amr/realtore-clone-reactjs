@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '../Firebase';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
+import { Helmet } from 'react-helmet';
 
 const SignUp = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -26,11 +27,7 @@ const SignUp = () => {
 	async function handleSubmit(e) {
 		e.preventDefault();
 		try {
-			const userCredential = await createUserWithEmailAndPassword(
-				auth,
-				email,
-				password
-			);
+			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 			updateProfile(auth.currentUser, {
 				displayName: name,
 			});

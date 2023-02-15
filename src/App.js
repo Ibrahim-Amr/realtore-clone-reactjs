@@ -1,11 +1,11 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { createHashRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/Home';
 import Offers from './pages/Offers';
 import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import ForgotPassword from './pages/ForgotPassword';
-import Navbar from './components/Navbar';
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './components/PrivateRoute';
@@ -16,32 +16,73 @@ import { Offline } from 'react-detect-offline';
 import DetectOffline from './components/DetectOffline';
 import ScrollToTop from 'react-scroll-to-top';
 import CategoryType from './pages/CategoryType';
+import Layout from './pages/Layout';
 
 function App() {
+	let routes = createHashRouter([
+		{
+			path: '/',
+			element: <Layout />,
+			children: [
+				{
+					index: true,
+					element: <Home />,
+				},
+				{
+					path: '/sign-in',
+					element: <SignIn />,
+				},
+				{
+					path: '/sign-up',
+					element: <SignUp />,
+				},
+				{
+					path: '/forgot-password',
+					element: <ForgotPassword />,
+				},
+				{
+					path: '/profile',
+					element: (
+						<PrivateRoute>
+							<Profile />
+						</PrivateRoute>
+					),
+				},
+				{
+					path: '/create-listing',
+					element: (
+						<PrivateRoute>
+							<CreateListing />
+						</PrivateRoute>
+					),
+				},
+				{
+					path: '/edit-item/:id',
+					element: (
+						<PrivateRoute>
+							<EditItem />
+						</PrivateRoute>
+					),
+				},
+				{
+					path: '/Offers',
+					element: <Offers />,
+				},
+				{
+					path: '/category/:type',
+					element: <CategoryType />,
+				},
+				{
+					path: '/category/:type/:id',
+					element: <Category />,
+				},
+			],
+		},
+	]);
+
 	return (
 		<>
-			<Router>
-				<Navbar />
-				<Routes>
-					<Route path='/' element={<Home />} />
-					<Route path='/sign-in' element={<SignIn />} />
-					<Route path='/sign-up' element={<SignUp />} />
-					<Route path='/forgot-password' element={<ForgotPassword />} />
-					<Route path='/profile' element={<PrivateRoute />}>
-						<Route path='/profile' element={<Profile />} />
-					</Route>
-					<Route path='/create-listing' element={<PrivateRoute />}>
-						<Route path='/create-listing' element={<CreateListing />} />
-					</Route>
-					<Route path='/edit-item/:id' element={<PrivateRoute />}>
-						<Route path='/edit-item/:id' element={<EditItem />} />
-					</Route>
-					<Route path='/Offers' element={<Offers />} />
-					<Route path='/category/:type' element={<CategoryType />} />
-					<Route path='/category/:type/:id' element={<Category />} />
-				</Routes>
-			</Router>
-			{/* Toast */}
+			<RouterProvider router={routes}></RouterProvider>;
 			<ToastContainer
 				position='top-right'
 				autoClose={5000}

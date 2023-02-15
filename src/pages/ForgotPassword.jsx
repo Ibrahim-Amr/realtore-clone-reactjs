@@ -1,5 +1,6 @@
 import { sendPasswordResetEmail } from 'firebase/auth';
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import OAuth from '../components/OAuth';
@@ -20,9 +21,7 @@ const ForgotPassword = () => {
 	return (
 		<>
 			<section>
-				<h1 className='text-3xl text-center mt-6 font-bold'>
-					Forgot Password
-				</h1>
+				<h1 className='text-3xl text-center mt-6 font-bold'>Forgot Password</h1>
 				<div className='flex justify-center items-center flex-wrap px-6 py-12 max-w-6xl mx-auto'>
 					{/* IMG */}
 					<div className='md:w-[67%] lg:w-[50%] mb-12 md:mb-6 '>
