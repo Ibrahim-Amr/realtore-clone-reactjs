@@ -15,6 +15,7 @@ import Category from './pages/Category';
 import { Offline } from 'react-detect-offline';
 import DetectOffline from './components/DetectOffline';
 import ScrollToTop from 'react-scroll-to-top';
+import CategoryType from './pages/CategoryType';
 
 function App() {
 	return (
@@ -36,6 +37,7 @@ function App() {
 						<Route path='/edit-item/:id' element={<EditItem />} />
 					</Route>
 					<Route path='/Offers' element={<Offers />} />
+					<Route path='/category/:type' element={<CategoryType />} />
 					<Route path='/category/:type/:id' element={<Category />} />
 				</Routes>
 			</Router>

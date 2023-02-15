@@ -1,10 +1,12 @@
 import { collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { db } from '../Firebase';
 import Listitem from './Listitem';
 
-const Offers = () => {
+const CategoryType = () => {
+	const { type } = useParams();
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [number, setNumber] = useState(8);
@@ -17,7 +19,7 @@ const Offers = () => {
 				// Create the Query
 				const q = query(
 					docRef,
-					where('offer', '==', true),
+					where('type', '==', type),
 					orderBy('timestamp', 'desc'),
 					limit(number)
 				);
@@ -43,7 +45,7 @@ const Offers = () => {
 	return (
 		<>
 			<main className='max-w-6xl px-3 pt-6 mx-auto'>
-				<h2 className='text-3xl text-center w-full  mb-6 font-bold'>Offers</h2>
+				<h2 className='text-3xl text-center w-full mb-6 font-bold'>Places for {type}</h2>
 				{loading ? (
 					<Spinner />
 				) : data && data.length > 0 ? (
@@ -69,4 +71,4 @@ const Offers = () => {
 	);
 };
 
-export default Offers;
+export default CategoryType;

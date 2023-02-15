@@ -7,7 +7,6 @@ import Spinner from './Spinner';
 
 const HomeCategorySection = ({ title, subTitle, type, value }) => {
 	const [data, setData] = useState(null);
-	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		async function FetchData() {
@@ -38,6 +37,7 @@ const HomeCategorySection = ({ title, subTitle, type, value }) => {
 		}
 		FetchData();
 	}, [type, value]);
+
 	if (data == null) {
 		return <Spinner />;
 	}
@@ -47,7 +47,7 @@ const HomeCategorySection = ({ title, subTitle, type, value }) => {
 				<div className='mb-6'>
 					<h2 className='text-2xl font-semibold px-3'>{title}</h2>
 					<Link
-						to={type === 'offer' ? '/offer' : `/category/${value}`}
+						to={type === 'offer' ? '/offers' : `/category/${value}`}
 						className='text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out px-3'>
 						{subTitle}
 					</Link>
