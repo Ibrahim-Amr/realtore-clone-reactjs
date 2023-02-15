@@ -175,7 +175,7 @@ const CreateListing = () => {
 			<h1 className='text-3xl text-center my-6 font-bold'>Add your home</h1>
 			<form onSubmit={handleSubmit}>
 				{/* RENT AND SELL */}
-				<p className='text-lg font-semibold mb-2'>Sell / Rednt</p>
+				<p className='text-lg font-semibold mb-2'>Sell / Rent</p>
 				<div className='flex gap-x-5'>
 					<button
 						onClick={onChange}
