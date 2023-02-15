@@ -14,7 +14,7 @@ import EditItem from './pages/EditItem';
 import Category from './pages/Category';
 import { Offline } from 'react-detect-offline';
 import DetectOffline from './components/DetectOffline';
-import { ScrollRestoration } from 'react-router-dom';
+import ScrollToTop from 'react-scroll-to-top';
 
 function App() {
 	return (
@@ -55,6 +55,7 @@ function App() {
 			<Offline>
 				<DetectOffline />
 			</Offline>
+			<ScrollToTop top='200' smooth color='white' className='flex justify-center items-center' />
 		</>
 	);
 }

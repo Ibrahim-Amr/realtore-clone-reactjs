@@ -35,3 +35,7 @@ html::-webkit-scrollbar {
 /* html {
 	scrollbar-width: none;
 } */
+
+.scroll-to-top {
+	background-color: rgb(46, 46, 46) !important;
+}

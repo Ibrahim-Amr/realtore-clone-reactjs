@@ -78,7 +78,7 @@ const Category = () => {
 					<div className='w-full min-h-[200px] lg:min-h-[400px] overflow-hidden'>
 						{/* Title */}
 						<p className='text-base  sm:text-2xl font-bold mb-3 text-blue-900'>
-							{categoryData.name} - ${' '}
+							{categoryData.name} - $
 							{categoryData.offer
 								? categoryData.discountedPrice
 										.toString()

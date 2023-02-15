@@ -49,7 +49,7 @@ const HomeSlider = () => {
 				effect='fade'
 				autoplay={{ delay: 3000 }}
 				modules={[Pagination, Navigation, Autoplay, EffectFade]}
-				className='mySwiper'>
+				className='mySwiper mb-6'>
 				{data.map(({ data, id }) => (
 					<SwiperSlide key={id} onClick={() => navigate(`/category/${data.type}/${id}`)}>
 						<div className='relative w-full overflow-hidden h-[350px] cursor-pointer'>
